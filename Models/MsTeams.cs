@@ -6,14 +6,15 @@ namespace QuickTeams.Models
     {
         public class Team
         {
-            public List<Channel> value { get; set; }
+            public List<TeamsObject> value { get; set; }
         }
 
-        public class Channel
+        public class TeamsObject
         {
             public string id { get; set; }
             public string displayName { get; set; }
             public string description { get; set; } = "";
+            public bool isArchived { get;set; }
             public string folderId { get; set; } = "";
         }
     }

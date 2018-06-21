@@ -30,7 +30,7 @@ namespace QuickTeams.Utils
             }
             else
             {
-                return "";
+                return null;
             }
 
             if (msTeam.value.Count == 0)
@@ -48,7 +48,8 @@ namespace QuickTeams.Utils
             Console.WriteLine("WARNING: If you don't have permission to create new channels for a given Team, your attempt to create or migrate channels will fail");
             for (int i = 0; i < msTeam.value.Count; i++)
             {
-                Console.WriteLine("[" + i + "]" + " " + msTeam.value[i].displayName + " " + msTeam.value[i].description);
+                Console.WriteLine("[" + i + "]" + " " + msTeam.value[i].displayName + " " + msTeam.value[i].description + " is archived? " + 
+                    msTeam.value[i].isArchived);
             }
 
             Console.Write("Enter the Team number you want to work with or type \"new\" to create a new Team: ");
@@ -70,7 +71,7 @@ namespace QuickTeams.Utils
             return newTeamId;
         }
 
-        public static string ArchiveTeam(string sourceTeamId, string aadAccessToken)
+        public static bool ArchiveTeam(string sourceTeamId, string aadAccessToken)
         {
             var httpResponseMessage =
             Helpers.httpClient.PostAsync(O365.MsGraphBetaEndpoint + "teams/" + sourceTeamId + "/archive",
@@ -78,15 +79,16 @@ namespace QuickTeams.Utils
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                Console.WriteLine("ERROR: Team could not be archived");
+                Console.WriteLine("ERROR: Operation failed.");
                 Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
+                return false;
             }
             else
             {
-                Console.WriteLine("Archive operation started.  It may take some time for the operation to complete. ");
+                Console.WriteLine("Operation started.  It may take some time for the operation to complete. ");
             }
 
-            return "uno";//newTeamId;
+            return true;
 
         }
 
@@ -98,20 +100,20 @@ namespace QuickTeams.Utils
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                Console.WriteLine("ERROR: Team could not be archived");
+                Console.WriteLine("ERROR: Operation failed.");
                 Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
                 return false;
             }
             else
             {
-                Console.WriteLine("Archive operation started.  It may take some time for the operation to complete. ");
+                Console.WriteLine("Operation started.  It may take some time for the operation to complete. ");
             }
 
             return true;
 
         }
 
-        public static string CloneTeam(string sourceTeamId, string aadAccessToken)
+        public static bool CloneTeam(string sourceTeamId, string aadAccessToken)
         {
             Console.Write("Enter your new Team name: ");
             var newGroupAndTeamName = Console.ReadLine();
@@ -163,15 +165,16 @@ namespace QuickTeams.Utils
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                Console.WriteLine("ERROR: Team could not be cloned " + newGroupAndTeamName + " with this Description " + newGroupAndTeamDescription);
+                Console.WriteLine("ERROR: Operation failed.");
                 Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
+                return false;
             }
             else
             {
-                Console.WriteLine("Archive operation started.  It may take some time for the operation to complete. ");
+                Console.WriteLine("Operation started.  It may take some time for the operation to complete. ");
             }
 
-            return "uno";//newTeamId;
+            return true;
         }
 
     }

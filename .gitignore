@@ -1,4 +1,5 @@
 azureSettings.json
+*.assets.cache
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

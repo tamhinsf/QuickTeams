@@ -7,6 +7,7 @@ using System.Threading;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using QuickTeams.Models;
 
 namespace QuickTeams.Utils
 {
@@ -33,7 +34,7 @@ namespace QuickTeams.Utils
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                Console.WriteLine("ERROR: Teams Group could not be created " + newMSGroupAndTeamName);
+                Console.WriteLine("ERROR: Operation failed.");
                 Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
                 return "";
             }
@@ -54,7 +55,7 @@ namespace QuickTeams.Utils
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                Console.WriteLine("ERROR: Group could not be converted into Team" + newMSGroupAndTeamName);
+                Console.WriteLine("ERROR: Operation failed.");
                 Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
                 return "";
             }
@@ -62,24 +63,23 @@ namespace QuickTeams.Utils
             return newGroupId;
         }
 
-        public static bool DeleteGroup(string groupToDelete, string aadAccessToken)
+        public static bool DeleteGroup(string groupIdToDelete, string aadAccessToken)
         {
             Helpers.httpClient.DefaultRequestHeaders.Clear();
             Helpers.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", aadAccessToken);
             Helpers.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var httpResponseMessage =
-            Helpers.httpClient.DeleteAsync(O365.MsGraphBetaEndpoint + "groups/" + groupToDelete).Result;
+            var httpResponseMessage = Helpers.httpClient.DeleteAsync(O365.MsGraphBetaEndpoint + "groups/" + groupIdToDelete).Result;
 
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
-                Console.WriteLine("ERROR: Team could not be deleted");
+                Console.WriteLine("ERROR: Operation failed.");
                 Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
                 return false;
             }
             else
             {
-                Console.WriteLine("Delete operation started.  It may take some time for the operation to complete. ");
+                Console.WriteLine("Operation started.  It may take some time for the operation to complete. ");
             }
 
             return true;

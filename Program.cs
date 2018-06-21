@@ -50,16 +50,24 @@ namespace QuickTeams
 
             while (Configuration["AzureAd:TenantId"] == "" || Configuration["AzureAd:ClientId"] == "")
             {
-                Console.WriteLine("");
-                Console.WriteLine("****************************************************************************************************");
-                Console.WriteLine("You need to provide your Azure Active Directory Tenant Name and the Application ID you created for");
-                Console.WriteLine("use with application to continue.  You can do this by altering Program.cs and re-compiling this app.");
-                Console.WriteLine("Or, you can provide it right now.");
-                Console.Write("Azure Active Directory Tenant Name (i.e your-domain.onmicrosoft.com): ");
-                Configuration["AzureAd:TenantId"] = Console.ReadLine();
-                Console.Write("Azure Active Directory Application ID: ");
-                Configuration["AzureAd:ClientId"] = Console.ReadLine();
-                Console.WriteLine("****************************************************************************************************");
+                if (args.Length == 2)
+                {
+                    Configuration["AzureAd:TenantId"] = args[0];
+                    Configuration["AzureAd:ClientId"] = args[1];
+                }
+                else
+                {
+                    Console.WriteLine("");
+                    Console.WriteLine("****************************************************************************************************");
+                    Console.WriteLine("You need to provide your Azure Active Directory Tenant Name and the Application ID you created for");
+                    Console.WriteLine("use with application to continue.  You can do this by altering Program.cs and re-compiling this app.");
+                    Console.WriteLine("Or, you can provide it right now.");
+                    Console.Write("Azure Active Directory Tenant Name (i.e your-domain.onmicrosoft.com): ");
+                    Configuration["AzureAd:TenantId"] = Console.ReadLine();
+                    Console.Write("Azure Active Directory Application ID: ");
+                    Configuration["AzureAd:ClientId"] = Console.ReadLine();
+                    Console.WriteLine("****************************************************************************************************");
+                }
             }
 
             Console.WriteLine("**************************************************");
@@ -101,6 +109,9 @@ namespace QuickTeams
                 commandString = Console.ReadLine();
                 switch (commandString.ToUpper())
                 {
+                    case "APPS":
+                        AppsCommands(sourceTeamId, aadAccessToken);
+                        break;
                     case "CLONE":
                         Utils.Teams.CloneTeam(sourceTeamId, aadAccessToken);
                         break;
@@ -110,14 +121,14 @@ namespace QuickTeams
                     case "UNARCHIVE":
                         Utils.Teams.UnArchiveTeam(sourceTeamId, aadAccessToken);
                         break;
-                    // case "DELETE":
-                    //     Utils.Groups.DeleteGroup(sourceTeamId, aadAccessToken);
-                    //     break;
+                    case "DELETE":
+                        Utils.Groups.DeleteGroup(sourceTeamId, aadAccessToken);
+                        break;
                     case "SWITCH":
                         sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
-                        break;                    
+                        break;
                     case "EXIT":
-                        Console.WriteLine("Bye!"); ;
+                        Console.WriteLine("Bye!");
                         break;
                     default:
                         Console.WriteLine("Invalid command.");
@@ -125,6 +136,43 @@ namespace QuickTeams
                 }
             }
 
+        }
+
+        static void AppsCommands(string sourceTeamId, string aadAccessToken)
+        {
+            string appsCommandString = string.Empty;
+
+            while (!appsCommandString.Equals("Back", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.Write("Enter apps command ( list | add | delete | back ) > ");
+                appsCommandString = Console.ReadLine();
+                switch (appsCommandString.ToUpper())
+                {
+                    case "LIST":
+                        Utils.Apps.ListApps(sourceTeamId, aadAccessToken);
+                        break;
+                    case "ADD":
+                        Console.Write("Enter the ID of the app you want to add: ");
+                        var appIdToAdd = Console.ReadLine();
+                        Utils.Apps.AddApp(sourceTeamId, appIdToAdd, aadAccessToken);
+                        break;
+                    case "DELETE":
+                        Console.WriteLine("Delete has certain \"limitations\"");
+                        Console.WriteLine("installedAndPermanent apps can't be deleted");
+                        Console.WriteLine("installed apps that are teamsOwned will become installedAndHidden");
+                        Console.Write("Enter the ID of the app you want to delete: ");
+                        var appIdToDelete = Console.ReadLine();
+                        Utils.Apps.DeleteApp(sourceTeamId, appIdToDelete, aadAccessToken);
+                        break;
+                    case "BACK":
+                        Console.WriteLine("Going back!");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command.");
+                        break;
+                }
+            }
+            return;
         }
 
         static AuthenticationResult UserLogin()
