@@ -43,7 +43,7 @@ You must register this application in the Azure Active Directory tenant associat
    * Click your app's name (i.e. QuickTeams) from the list of applications
    * Copy the Application Id
    * All settings -> Required permissions
-     * Click Add  
+     * Click Add
      * Select an API -> Microsoft Graph -> Select (button)
      * Select permissions 
 	   * Read all users' full profiles
