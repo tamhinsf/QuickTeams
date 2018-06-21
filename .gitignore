@@ -1,5 +1,5 @@
 azureSettings.json
-obj/*
+obj/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
