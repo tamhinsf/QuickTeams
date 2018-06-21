@@ -12,7 +12,7 @@ namespace QuickTeams.Utils
 {
     public class Groups
     {
-        public static string CreateGroupAndTeam(string aadAccessToken, string newMSGroupAndTeamName) 
+        public static string CreateGroupAndTeam(string aadAccessToken, string newMSGroupAndTeamName)
         {
             Helpers.httpClient.DefaultRequestHeaders.Clear();
             Helpers.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", aadAccessToken);
@@ -22,8 +22,8 @@ namespace QuickTeams.Utils
             dynamic newGroupObject = new JObject();
             newGroupObject.displayName = newMSGroupAndTeamName;
             newGroupObject.mailEnabled = "true";
-            newGroupObject.groupTypes = new JArray("Unified");            
-            newGroupObject.mailNickname = newMSGroupAndTeamName.Replace(" ","");
+            newGroupObject.groupTypes = new JArray("Unified");
+            newGroupObject.mailNickname = newMSGroupAndTeamName.Replace(" ", "");
             newGroupObject.securityEnabled = "false";
 
             var createMsGroupPostData = JsonConvert.SerializeObject(newGroupObject);
@@ -60,6 +60,29 @@ namespace QuickTeams.Utils
             }
 
             return newGroupId;
+        }
+
+        public static bool DeleteGroup(string groupToDelete, string aadAccessToken)
+        {
+            Helpers.httpClient.DefaultRequestHeaders.Clear();
+            Helpers.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", aadAccessToken);
+            Helpers.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var httpResponseMessage =
+            Helpers.httpClient.DeleteAsync(O365.MsGraphBetaEndpoint + "groups/" + groupToDelete).Result;
+
+            if (!httpResponseMessage.IsSuccessStatusCode)
+            {
+                Console.WriteLine("ERROR: Team could not be deleted");
+                Console.WriteLine("REASON: " + httpResponseMessage.Content.ReadAsStringAsync().Result);
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Delete operation started.  It may take some time for the operation to complete. ");
+            }
+
+            return true;
         }
     }
 }

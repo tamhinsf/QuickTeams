@@ -12,7 +12,7 @@ using Microsoft.Graph;
 
 namespace QuickTeams.Utils
 {
-    public class Channels
+    public class Apps
     {
         public static string SelectJoinedTeam(string aadAccessToken)
         {
@@ -23,12 +23,10 @@ namespace QuickTeams.Utils
             Helpers.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var httpResponseMessage =
                     Helpers.httpClient.GetAsync(O365.MsGraphBetaEndpoint + "me/joinedTeams").Result;
-            Console.WriteLine("httpResponseMessage is  " + httpResponseMessage.Content.ReadAsStringAsync().Result);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var httpResultString = httpResponseMessage.Content.ReadAsStringAsync().Result;
                 msTeam = JsonConvert.DeserializeObject<MsTeams.Team>(httpResultString);
-                Console.WriteLine("Groups " + httpResultString);
             }
             else
             {
@@ -40,7 +38,7 @@ namespace QuickTeams.Utils
                 Console.WriteLine("");
                 Console.WriteLine("Whoops!");
                 Console.WriteLine("You're not a member of any existing Microsoft Teams");
-                Console.WriteLine("You must be a member of an existing Team before you can import channels.");
+                Console.WriteLine("You must be a member of an existing Team before you can do something with it!");
                 Console.WriteLine("");
                 Console.WriteLine("You can create a new Team right now!");
                 return CreateNewTeam(aadAccessToken);
@@ -53,7 +51,7 @@ namespace QuickTeams.Utils
                 Console.WriteLine("[" + i + "]" + " " + msTeam.value[i].displayName + " " + msTeam.value[i].description);
             }
 
-            Console.Write("Enter the destination Team number or type \"new\" to create a new Team: ");
+            Console.Write("Enter the Team number you want to work with or type \"new\" to create a new Team: ");
             var selectedTeamIndex = Console.ReadLine();
             if (selectedTeamIndex.StartsWith("n", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -109,8 +107,6 @@ namespace QuickTeams.Utils
             {   
                 newGroupAndTeamPartsToClone += "members ";
             }  
-
-            Console.WriteLine("parts to clone are " + newGroupAndTeamPartsToClone.Trim().Replace(" ",","));
             
             // this might break on some platforms
             dynamic clonedMsTeam = new JObject();
@@ -131,7 +127,7 @@ namespace QuickTeams.Utils
             }
             else
             {
-                Console.WriteLine("Clone operation started ");
+                Console.WriteLine("Clone operation started.  It may take some time for the clone to complete. ");
             }
 
             return "uno";//newTeamId;

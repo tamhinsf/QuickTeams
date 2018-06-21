@@ -26,8 +26,8 @@ namespace QuickTeams
         const string aadResourceAppId = "00000003-0000-0000-c000-000000000000";
 
         static AuthenticationContext authenticationContext = null;
-        static AuthenticationResult authenticationResult = null; 
-        
+        static AuthenticationResult authenticationResult = null;
+
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
@@ -90,24 +90,40 @@ namespace QuickTeams
             }
             else
             {
-                Console.WriteLine("You've successfully signed in.  Welcome " + authenticationResult.UserInfo.GivenName + " " + authenticationResult.UserInfo.DisplayableId);
+                Console.WriteLine("You've successfully signed in.  Welcome " + authenticationResult.UserInfo.DisplayableId);
             }
 
-            // while (!commandString.Equals("Exit", StringComparison.InvariantCultureIgnoreCase))
-            // {
-            //     Console.ForegroundColor = ConsoleColor.White;
-            //     Console.WriteLine("Enter command (create | clone | meeting | presence | help | exit ) >");
-            //     commandString = Console.ReadLine();
-
-            //     switch (commandString.ToUpper())
-            //     {
-            //         default:
-            //             break;
-            //     }
-            // }
-
-            var sourceTeamId = Utils.Channels.SelectJoinedTeam(aadAccessToken);
-            var cloneTeamResult = Utils.Channels.CloneTeam(sourceTeamId,aadAccessToken);
+            var sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
+            Console.WriteLine("What would you like to do with this team? ");
+            while (!commandString.Equals("Exit", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.Write("Enter command ( apps | clone | archive | unarchive | delete | switch | exit ) > ");
+                commandString = Console.ReadLine();
+                switch (commandString.ToUpper())
+                {
+                    case "CLONE":
+                        Utils.Teams.CloneTeam(sourceTeamId, aadAccessToken);
+                        break;
+                    case "ARCHIVE":
+                        Utils.Teams.ArchiveTeam(sourceTeamId, aadAccessToken);
+                        break;
+                    case "UNARCHIVE":
+                        Utils.Teams.UnArchiveTeam(sourceTeamId, aadAccessToken);
+                        break;
+                    // case "DELETE":
+                    //     Utils.Groups.DeleteGroup(sourceTeamId, aadAccessToken);
+                    //     break;
+                    case "SWITCH":
+                        sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
+                        break;                    
+                    case "EXIT":
+                        Console.WriteLine("Bye!"); ;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command.");
+                        break;
+                }
+            }
 
         }
 
