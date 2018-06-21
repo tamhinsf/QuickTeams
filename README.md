@@ -1,6 +1,6 @@
 # Quick Teams for Microsoft Teams 
 
-Clone, archive, un-archive your Micosoft Teams and manage the apps you've installed.  Here's what Quick Teams can do for you:
+Clone, archive, un-archive your Micosoft Teams and manage the apps you've installed to them.  Here's what Quick Teams can do for you:
 
 * Clone an existing Team into a new one - in whole or in part!  It's up to you to select which elements you want:
    * Channel structure
