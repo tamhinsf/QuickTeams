@@ -59,7 +59,6 @@ namespace QuickTeams.Utils
                 return CreateNewTeam(aadAccessToken);
             }
             var selectedTeamId = msTeam.value[Convert.ToInt16(selectedTeamIndex)].id;
-            Console.WriteLine("Team ID is " + selectedTeamId);
             return selectedTeamId;
         }
 

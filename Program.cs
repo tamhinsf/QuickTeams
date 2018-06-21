@@ -102,15 +102,16 @@ namespace QuickTeams
             }
 
             var sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
-            Console.WriteLine("What would you like to do with this team? ");
+            var sourceTeamName = Utils.Groups.GetGroupDetails(sourceTeamId, aadAccessToken);
             while (!commandString.Equals("Exit", StringComparison.InvariantCultureIgnoreCase))
             {
+                Console.WriteLine("Selected Team: {0} ", sourceTeamName);
                 Console.Write("Enter command ( apps | clone | archive | unarchive | delete | switch | exit ) > ");
                 commandString = Console.ReadLine();
                 switch (commandString.ToUpper())
                 {
                     case "APPS":
-                        AppsCommands(sourceTeamId, aadAccessToken);
+                        AppsCommands(sourceTeamId, sourceTeamName, aadAccessToken);
                         break;
                     case "CLONE":
                         Utils.Teams.CloneTeam(sourceTeamId, aadAccessToken);
@@ -123,9 +124,13 @@ namespace QuickTeams
                         break;
                     case "DELETE":
                         Utils.Groups.DeleteGroup(sourceTeamId, aadAccessToken);
+                        Console.WriteLine("Since you deleted the Team {0}, you need to select a new Team.", sourceTeamName);
+                        sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
+                        sourceTeamName = Utils.Groups.GetGroupDetails(sourceTeamId, aadAccessToken);
                         break;
                     case "SWITCH":
                         sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
+                        sourceTeamName = Utils.Groups.GetGroupDetails(sourceTeamId, aadAccessToken);
                         break;
                     case "EXIT":
                         Console.WriteLine("Bye!");
@@ -138,12 +143,13 @@ namespace QuickTeams
 
         }
 
-        static void AppsCommands(string sourceTeamId, string aadAccessToken)
+        static void AppsCommands(string sourceTeamId, string sourceTeamName, string aadAccessToken)
         {
             string appsCommandString = string.Empty;
 
             while (!appsCommandString.Equals("Back", StringComparison.InvariantCultureIgnoreCase))
             {
+                Console.WriteLine("Selected Team: {0}", sourceTeamName);
                 Console.Write("Enter apps command ( list | add | delete | back ) > ");
                 appsCommandString = Console.ReadLine();
                 switch (appsCommandString.ToUpper())

@@ -14,7 +14,7 @@ namespace QuickTeams.Models
             public string id { get; set; }
             public string displayName { get; set; }
             public string description { get; set; } = "";
-            public bool isArchived { get;set; }
+            public bool isArchived { get;set; } = false;
             public string folderId { get; set; } = "";
         }
     }
