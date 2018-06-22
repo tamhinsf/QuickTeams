@@ -8,7 +8,7 @@ Clone, archive, un-archive your Microsoft Teams and manage the apps you've insta
    * Installed applications
    * Settings
    * Members
-* Archive and un-achive a Team
+* Archive and un-archive a Team
 * Manage the apps you've installed to a Team
 
 We'll add features as more Microsoft Teams APIs become available and as time permits.  For now, let's get started! 
