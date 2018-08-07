@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace QuickTeams
 {
@@ -102,11 +103,13 @@ namespace QuickTeams
             }
 
             var sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
-            var sourceTeamName = Utils.Groups.GetGroupDetails(sourceTeamId, aadAccessToken);
+            dynamic sourceGroupObject = JObject.Parse(Utils.Groups.GetGroupDetails("",sourceTeamId, aadAccessToken));
+            string sourceTeamName = sourceGroupObject.displayName;
+
             while (!commandString.Equals("Exit", StringComparison.InvariantCultureIgnoreCase))
             {
                 Console.WriteLine("Selected Team: {0} ", sourceTeamName);
-                Console.Write("Enter command ( apps | clone | archive | unarchive | delete | switch | exit ) > ");
+                Console.Write("Enter command ( apps | clone | archive | unarchive | download | delete | channel | switch | exit ) > ");
                 commandString = Console.ReadLine();
                 switch (commandString.ToUpper())
                 {
@@ -122,15 +125,22 @@ namespace QuickTeams
                     case "UNARCHIVE":
                         Utils.Teams.UnArchiveTeam(sourceTeamId, aadAccessToken);
                         break;
+                    case "DOWNLOAD":
+                        Utils.Teams.DownloadTeam(sourceTeamId, aadAccessToken);
+                        break;
+                    case "CHANNEL":
+                        Utils.Channels.SelectChannel(sourceTeamId, aadAccessToken);
+                        break;
                     case "DELETE":
                         Utils.Groups.DeleteGroup(sourceTeamId, aadAccessToken);
                         Console.WriteLine("Since you deleted the Team {0}, you need to select a new Team.", sourceTeamName);
-                        sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
-                        sourceTeamName = Utils.Groups.GetGroupDetails(sourceTeamId, aadAccessToken);
+                        dynamic deleteGroupsObject = JObject.Parse(Utils.Groups.GetGroupDetails("",sourceTeamId, aadAccessToken));
+                        sourceTeamName = deleteGroupsObject.displayName;
                         break;
                     case "SWITCH":
                         sourceTeamId = Utils.Teams.SelectJoinedTeam(aadAccessToken);
-                        sourceTeamName = Utils.Groups.GetGroupDetails(sourceTeamId, aadAccessToken);
+                        dynamic switchGroupsObject = JObject.Parse(Utils.Groups.GetGroupDetails("",sourceTeamId, aadAccessToken));
+                        sourceTeamName = switchGroupsObject.displayName;
                         break;
                     case "EXIT":
                         Console.WriteLine("Bye!");

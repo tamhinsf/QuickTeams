@@ -1,7 +1,17 @@
 # Quick Teams for Microsoft Teams 
 
-Clone, archive, un-archive your Microsoft Teams and manage the apps you've installed to them.  Here's what Quick Teams can do for you:
+Download, clone, archive, un-archive your Microsoft Teams and manage the apps you've installed to them.  Here's what Quick Teams can do for you:
 
+* Download all messages on a per channel or Team-wide basis
+   * We'll create a folder called quickteams, which contains subfolders that correspond to the channel(s) downloaded.
+      * Each message will be contained in an individual JSON file, whose name corresponds to the internally generated message ID
+      * Each reply will also be contained in an individual JSON file, whose name corresponds to the ID of the parent message and the ID of the reply
+      * A file called channelSettings will contain metadata about the channel
+   * Team-wide downloads will include metadata about Team and underlying O365 group in the quickteams folder
+      * teamSettings - metadata about the team
+      * groupSettings - metadata about the underlying O365 group
+      * groupMembers - group member list
+      * groupOwners - group owner list
 * Clone an existing Team into a new one - in whole or in part!  It's up to you to select which elements you want:
    * Channel structure
    * Tabs (structure)
@@ -11,7 +21,9 @@ Clone, archive, un-archive your Microsoft Teams and manage the apps you've insta
 * Archive and un-archive a Team
 * Manage the apps you've installed to a Team
 
-We'll add features as more Microsoft Teams APIs become available and as time permits.  For now, let's get started! 
+Looking to create your own archival or compliance tool?  Use our project as your starter kit!  
+
+We'll add features as more Microsoft Teams APIs become available and as time permits.  For now, let's get started!  
 
 
 ## Setup a development environment 
@@ -97,8 +109,10 @@ You must register this application in the Azure Active Directory tenant associat
      * clone - clone this team into a new one.  We'll ask you for the name of the new team and the parts you want to clone.
      * archive - archive this team
      * unarchive - unarchive this team
+     * download - download an entire Team's messages, metadata about both the Team and its channels, and membership information
      * delete - delete this team
      * switch - change to another team
+     * channel - create a new channel or download an individual channel's messages and metadata
      * exit - leave the application
 * Go back to the Microsoft Team app and explore the results of the actions you started from Quick Teams!
 

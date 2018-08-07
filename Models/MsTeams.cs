@@ -7,6 +7,7 @@ namespace QuickTeams.Models
         public class Team
         {
             public List<TeamsObject> value { get; set; }
+            // public string __invalid_name__@odata.context { get; set; }
         }
 
         public class TeamsObject

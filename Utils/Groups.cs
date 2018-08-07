@@ -64,19 +64,18 @@ namespace QuickTeams.Utils
            return newGroupId;
         }
 
-        public static string GetGroupDetails(string groupIdtoGet, string aadAccessToken)
+        public static string GetGroupDetails(string detailType, string groupIdtoGet, string aadAccessToken)
         {
             Helpers.httpClient.DefaultRequestHeaders.Clear();
             Helpers.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", aadAccessToken);
             Helpers.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            
             var httpResponseMessage =
-                    Helpers.httpClient.GetAsync(O365.MsGraphBetaEndpoint + "groups/" + groupIdtoGet).Result;
+                    Helpers.httpClient.GetAsync(O365.MsGraphBetaEndpoint + "groups/" + groupIdtoGet + detailType).Result;
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var httpResultString = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                dynamic groupsObject = JObject.Parse(httpResultString);
-                string groupName = groupsObject.displayName;
-                return groupName;
+                return httpResultString;
             }
             else
             {

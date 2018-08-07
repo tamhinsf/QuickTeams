@@ -70,6 +70,24 @@ namespace QuickTeams.Utils
             return newTeamId;
         }
 
+        public static string GetTeamDetails(string sourceTeamId, string aadAccessToken)
+        {
+            Helpers.httpClient.DefaultRequestHeaders.Clear();
+            Helpers.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", aadAccessToken);
+            Helpers.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpResponseMessage =
+                    Helpers.httpClient.GetAsync(O365.MsGraphBetaEndpoint + "teams/" + sourceTeamId).Result;
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var httpResultString = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                return httpResultString;
+            }
+            else
+            {
+                return null;
+            }   
+        }
+
         public static bool ArchiveTeam(string sourceTeamId, string aadAccessToken)
         {
             var httpResponseMessage =
@@ -176,5 +194,32 @@ namespace QuickTeams.Utils
             return true;
         }
 
+        public static void DownloadTeam(string sourceTeamId,string aadAccessToken)
+        {
+            Console.Write("Please enter the path to the folder: ");
+            var channelDownloadFolder = Console.ReadLine();
+            Files.CreateArchivePath(Path.Combine(channelDownloadFolder,"quickteams"));
+
+            var teamDetails = Teams.GetTeamDetails(sourceTeamId, aadAccessToken);
+            Files.CreateArchiveFile(teamDetails, "teamSettings", Path.Combine(channelDownloadFolder,"quickteams"));
+
+            var groupSettingDetails = Groups.GetGroupDetails("",sourceTeamId, aadAccessToken);
+            Files.CreateArchiveFile(groupSettingDetails, "groupSettings", Path.Combine(channelDownloadFolder,"quickteams"));
+
+            var groupMemberDetails = Groups.GetGroupDetails("/members",sourceTeamId, aadAccessToken);
+            Files.CreateArchiveFile(groupMemberDetails, "groupMembers", Path.Combine(channelDownloadFolder,"quickteams"));
+
+            var groupOwnerDetails = Groups.GetGroupDetails("/owners",sourceTeamId, aadAccessToken);
+            Files.CreateArchiveFile(groupOwnerDetails, "groupOwners", Path.Combine(channelDownloadFolder,"quickteams"));
+
+            var msTeamsChannels = Channels.GetChannels(sourceTeamId, aadAccessToken);
+            for (int i = 0; i < msTeamsChannels.value.Count; i++)
+            {
+                Console.WriteLine("Downloading " + msTeamsChannels.value[i].displayName);
+                Channels.DownloadChannelMessagesAndReplies("",channelDownloadFolder, msTeamsChannels.value[i], sourceTeamId, aadAccessToken);
+            }
+            
+            return;
+        }
     }
 }
